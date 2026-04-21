@@ -1,0 +1,167 @@
+{
+  "platform_name": "Payment Platform",
+  "summary": "Simplified internal payment platform used for incident triage scenarios.",
+  "services": [
+    {
+      "name": "api-gateway",
+      "type": "edge_http_gateway",
+      "responsibilities": [
+        "receive external HTTP requests from clients",
+        "route requests to internal services"
+      ],
+      "depends_on": [
+        "auth-service",
+        "payment-service",
+        "billing-service",
+        "notification-service",
+        "reporting-service"
+      ],
+      "known_risks": [
+        "may return 504 Gateway Timeout when downstream services or databases degrade"
+      ]
+    },
+    {
+      "name": "auth-service",
+      "type": "authentication_service",
+      "responsibilities": [
+        "authenticate users",
+        "issue and validate tokens"
+      ],
+      "depends_on": [],
+      "known_risks": [
+        "token signature issues can lead to 401 responses",
+        "mobile login failures may appear when token validation is broken"
+      ]
+    },
+    {
+      "name": "payment-service",
+      "type": "transaction_processing_service",
+      "responsibilities": [
+        "create payment transactions",
+        "process payment transactions",
+        "call external payment providers"
+      ],
+      "depends_on": [
+        "billing-service"
+      ],
+      "data_stores": [
+        "postgresql:payment-service"
+      ],
+      "external_dependencies": [
+        "payment providers"
+      ],
+      "known_risks": [
+        "external provider timeouts",
+        "external provider 5xx errors",
+        "invalid provider credentials"
+      ]
+    },
+    {
+      "name": "billing-service",
+      "type": "billing_and_balance_service",
+      "responsibilities": [
+        "manage balances",
+        "manage invoicing"
+      ],
+      "depends_on": [],
+      "data_stores": [
+        "postgresql:billing-service"
+      ]
+    },
+    {
+      "name": "notification-service",
+      "type": "notification_delivery_service",
+      "responsibilities": [
+        "send email notifications",
+        "send SMS notifications"
+      ],
+      "depends_on": [],
+      "external_dependencies": [
+        "SMTP provider",
+        "SMS provider"
+      ],
+      "known_risks": [
+        "may degrade when external SMTP or SMS providers have issues"
+      ]
+    },
+    {
+      "name": "reporting-service",
+      "type": "analytical_reporting_service",
+      "responsibilities": [
+        "generate reports",
+        "export data"
+      ],
+      "depends_on": [
+        "billing-service",
+        "payment-service"
+      ],
+      "known_risks": [
+        "long analytical queries may create extra database load",
+        "database pressure may indirectly impact transactional flows"
+      ]
+    }
+  ],
+  "shared_infrastructure": {
+    "logging": {
+      "type": "centralized_log_storage",
+      "stack": "ELK",
+      "used_by": "all services"
+    },
+    "databases": [
+      {
+        "engine": "PostgreSQL",
+        "instance_name": "payment-service",
+        "used_by": [
+          "payment-service"
+        ]
+      },
+      {
+        "engine": "PostgreSQL",
+        "instance_name": "billing-service",
+        "used_by": [
+          "billing-service"
+        ]
+      }
+    ]
+  },
+  "known_operational_patterns": [
+    {
+      "pattern": "external_payment_provider_failure",
+      "signals": [
+        "payment-service timeouts",
+        "payment failures",
+        "provider-specific 5xx responses",
+        "invalid credentials"
+      ],
+      "likely_impact": "customers cannot complete payments"
+    },
+    {
+      "pattern": "database_degradation_due_to_reporting",
+      "signals": [
+        "high database CPU",
+        "long-running reporting queries",
+        "increased latency on payment endpoints",
+        "504 at api-gateway"
+      ],
+      "likely_impact": "degraded transaction creation and downstream timeouts"
+    },
+    {
+      "pattern": "notification_provider_degradation",
+      "signals": [
+        "SMTP connection errors",
+        "SMS provider errors",
+        "notifications delayed or missing"
+      ],
+      "likely_impact": "business flow may succeed while user notifications fail"
+    },
+    {
+      "pattern": "authentication_token_issue",
+      "signals": [
+        "401 responses from auth-service",
+        "invalid token signatures"
+      ],
+      "likely_impact": "users cannot authenticate"
+    }
+  ],
+  "source": "Derived from the take-home assignment system description and general notes."
+}

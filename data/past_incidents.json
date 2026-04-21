@@ -1,0 +1,99 @@
+[
+	{
+		"id": "INC-101",
+		"category": "external_payment_provider_issue",
+		"title": "Card payments fail due to provider timeouts",
+		"summary": "Customers cannot pay by card. payment-service shows massive timeouts when calling PayGate. No other major anomalies were noticed.",
+		"services": ["payment-service"],
+		"endpoints": [],
+		"keywords": ["card payment", "timeout", "paygate", "provider"],
+		"signals": [
+			"customers cannot pay by card",
+			"massive timeouts in payment-service",
+			"timeouts when calling PayGate",
+			"issue started around 12:05 UTC",
+			"no other metric anomalies"
+		],
+		"likely_affected": "customers attempting card payments",
+		"diagnostic_hints": [
+			"check provider status and notifications",
+			"compare latency and errors across payment providers",
+			"verify whether failures are isolated to PayGate"
+		]
+	},
+	{
+		"id": "INC-102",
+		"category": "db_degradation_caused_by_reporting",
+		"title": "payments/create latency spike caused by reporting load",
+		"summary": "Response time for /payments/create increased to 5-7 seconds. DB CPU is high and reporting-service runs many long queries. Some users receive 504 from api-gateway.",
+		"services": ["reporting-service", "api-gateway", "payment-service"],
+		"endpoints": ["/payments/create"],
+		"keywords": [
+			"latency",
+			"high cpu",
+			"long-running queries",
+			"504",
+			"database"
+		],
+		"signals": [
+			"sharp increase in /payments/create response time",
+			"high DB CPU",
+			"many long-running queries from reporting-service",
+			"504 Gateway Timeout from api-gateway"
+		],
+		"likely_affected": "customers creating payments and downstream services depending on the same database resources",
+		"diagnostic_hints": [
+			"check long-running reporting queries",
+			"correlate DB CPU with payment latency",
+			"verify whether reporting load is starving transactional queries"
+		]
+	},
+	{
+		"id": "INC-103",
+		"category": "notification_delivery_issue",
+		"title": "Top-up confirmation emails are not delivered",
+		"summary": "Users do not receive top-up confirmation emails. Money is credited successfully and balances are correct. notification-service shows intermittent SMTP connection errors.",
+		"services": ["notification-service", "billing-service"],
+		"endpoints": [],
+		"keywords": ["email", "notification", "smtp", "connection error", "top-up"],
+		"signals": [
+			"users do not receive top-up confirmation emails",
+			"money is credited successfully",
+			"balances are correct",
+			"intermittent SMTP provider connection errors"
+		],
+		"likely_affected": "users waiting for top-up confirmation notifications",
+		"diagnostic_hints": [
+			"check SMTP provider connectivity and recent failures",
+			"compare notification enqueue vs delivery counts",
+			"confirm business flow succeeded despite notification degradation"
+		]
+	},
+	{
+		"id": "INC-104",
+		"category": "user_authentication_errors",
+		"title": "Mobile login failures caused by token signature errors",
+		"summary": "Some customers cannot log in via the mobile app. auth-service returns 401 errors and logs mention invalid token signatures. Other services do not show large-scale failures.",
+		"services": ["auth-service"],
+		"endpoints": ["/login"],
+		"keywords": [
+			"401",
+			"invalid token signature",
+			"mobile app",
+			"login",
+			"auth"
+		],
+		"signals": [
+			"some customers cannot log in via the mobile app",
+			"auth-service returns 401",
+			"logs show invalid token signatures",
+			"no large-scale failures elsewhere"
+		],
+		"likely_affected": "mobile users attempting to authenticate",
+		"diagnostic_hints": [
+			"check token signing and verification configuration",
+			"compare recent auth deployments or key rotations",
+			"verify whether failures are isolated to mobile-issued tokens"
+		]
+	}
+]
