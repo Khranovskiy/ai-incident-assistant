@@ -64,8 +64,15 @@ func scoreIncident(parsed ParsedSignals, inc PastIncident) int {
 		}
 	}
 
-	// Keyword overlap
+	// Provider/protocol terms are scored separately and excluded from keyword overlap
+	// to avoid double-counting. Only specific provider names, not generic words.
+	providerTerms := map[string]bool{"paygate": true, "smtp": true, "sms": true}
+
+	// Keyword overlap (skip terms that match a provider term)
 	for _, pk := range parsed.Keywords {
+		if providerTerms[strings.ToLower(pk)] {
+			continue
+		}
 		for _, ik := range inc.Keywords {
 			if strings.EqualFold(pk, ik) {
 				score += scoreKeyword
@@ -73,19 +80,18 @@ func scoreIncident(parsed ParsedSignals, inc PastIncident) int {
 		}
 	}
 
-	// Provider/protocol term overlap (check keywords for provider-like terms)
-	providerTerms := []string{"paygate", "smtp", "sms", "provider", "postgresql", "elk"}
-	for _, term := range providerTerms {
+	// Provider/protocol term overlap
+	for term := range providerTerms {
 		inParsed := false
 		for _, pk := range parsed.Keywords {
-			if strings.Contains(strings.ToLower(pk), term) {
+			if strings.EqualFold(pk, term) {
 				inParsed = true
 				break
 			}
 		}
 		inIncident := false
 		for _, ik := range inc.Keywords {
-			if strings.Contains(strings.ToLower(ik), term) {
+			if strings.EqualFold(ik, term) {
 				inIncident = true
 				break
 			}
