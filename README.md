@@ -112,7 +112,8 @@ incident text
 
 ## Validation and recovery
 
-The validator checks every field in the output contract. If the LLM response is invalid:
+The output is validated against the expected response schema.
+The implementation handles invalid JSON, unexpected output structure, missing fields, wrong enum values, and unexpected response language, and retries with a refined prompt when validation fails.
 
 1. **Repair**: extract JSON from markdown fences or surrounding prose; normalize enum casing variants (e.g. `"High"` → `"high"`)
 2. **Regenerate**: one retry with a refined prompt that includes the validation error and the original invalid output
