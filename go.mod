@@ -1,9 +1,10 @@
-module github.com/den/incident-assistant
+module github.com/khranovskiy/incident-assistant
 
 go 1.25.6
 
+require github.com/anthropics/anthropic-sdk-go v1.37.0
+
 require (
-	github.com/anthropics/anthropic-sdk-go v1.37.0 // indirect
 	github.com/tidwall/gjson v1.18.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect

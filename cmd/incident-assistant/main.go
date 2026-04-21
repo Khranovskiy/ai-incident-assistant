@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/den/incident-assistant/internal"
+	"github.com/khranovskiy/incident-assistant/internal"
 )
 
 func main() {
