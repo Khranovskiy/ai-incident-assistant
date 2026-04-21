@@ -1,0 +1,5 @@
+.env
+/incident-assistant
+*.exe
+.DS_Store
+internal/orchestrator.go.full
