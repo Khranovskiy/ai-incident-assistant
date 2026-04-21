@@ -14,16 +14,17 @@ const (
 
 // SelectRelevantIncidents returns up to 2 most relevant past incidents.
 // Returns nil if no incident meets the minimum relevance threshold.
-func SelectRelevantIncidents(parsed ParsedSignals, incidents []PastIncident) []PastIncident {
+func SelectRelevantIncidents(parsed *ParsedSignals, incidents []PastIncident) []PastIncident {
 	type scored struct {
 		incident PastIncident
 		score    int
 	}
 
 	var results []scored
-	for _, inc := range incidents {
-		s := scoreIncident(parsed, inc)
+	for i := range incidents {
+		s := scoreIncident(parsed, &incidents[i])
 		if s >= minRelevanceThreshold {
+			inc := incidents[i]
 			results = append(results, scored{inc, s})
 		}
 	}
@@ -43,7 +44,7 @@ func SelectRelevantIncidents(parsed ParsedSignals, incidents []PastIncident) []P
 	return top
 }
 
-func scoreIncident(parsed ParsedSignals, inc PastIncident) int {
+func scoreIncident(parsed *ParsedSignals, inc *PastIncident) int {
 	score := 0
 
 	// Service overlap

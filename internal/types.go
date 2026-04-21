@@ -16,10 +16,10 @@ type Category string
 
 const (
 	CategoryExternalPaymentProvider Category = "external_payment_provider_issue"
-	CategoryDBDegradation          Category = "db_degradation_caused_by_reporting"
-	CategoryNotificationDelivery   Category = "notification_delivery_issue"
-	CategoryUserAuthentication     Category = "user_authentication_errors"
-	CategoryUnknown                Category = "unknown_or_mixed"
+	CategoryDBDegradation           Category = "db_degradation_caused_by_reporting"
+	CategoryNotificationDelivery    Category = "notification_delivery_issue"
+	CategoryUserAuthentication      Category = "user_authentication_errors"
+	CategoryUnknown                 Category = "unknown_or_mixed"
 )
 
 var ValidCategories = []Category{
@@ -85,9 +85,9 @@ type DatabaseInfo struct {
 }
 
 type SystemDescription struct {
-	PlatformName string        `json:"platform_name"`
-	Summary      string        `json:"summary"`
-	Services     []ServiceInfo `json:"services"`
+	PlatformName         string        `json:"platform_name"`
+	Summary              string        `json:"summary"`
+	Services             []ServiceInfo `json:"services"`
 	SharedInfrastructure struct {
 		Logging struct {
 			Type   string `json:"type"`
