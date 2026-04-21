@@ -4,7 +4,7 @@ A CLI tool for triaging production incidents on a payment platform. It takes a f
 
 ## Requirements
 
-- Go 1.22+
+- Go 1.25+
 - `ANTHROPIC_API_KEY` environment variable (required)
 - `ANTHROPIC_MODEL` environment variable (optional, default: `claude-sonnet-4-20250514`)
 
@@ -47,8 +47,8 @@ The final triage result is printed to **stdout** as a JSON object. Verbose stage
 ## Running tests
 
 ```bash
-go test ./internal/ -v
-go test ./internal/ -v -short   # skip tests that require network
+go test ./internal/ -v -short   # recommended: skips tests that require a network call
+go test ./internal/ -v          # runs all tests including the orchestrator smoke test (makes one network call)
 ```
 
 ## Architecture
@@ -134,8 +134,8 @@ For each example incident, the expected behavior is:
 |---|---|---|
 | `inc101_payment_provider.txt` | `external_payment_provider_issue` | PayGate timeouts, card payment failures, timing hints |
 | `inc102_db_reporting.txt` | `db_degradation_caused_by_reporting` | high DB CPU, long queries from reporting-service, 504s |
-| `inc103_notification.txt` | `notification_delivery_issue` | missing top-up email confirmations, SMTP connection failures |
-| `inc104_auth.txt` | `user_authentication_errors` | auth failures, invalid token signatures, mobile login issues |
+| `inc103_notification.txt` | `notification_delivery_issue` | SMS and email confirmations not delivered, SMTP connection failures |
+| `inc104_auth.txt` | `user_authentication_errors` | auth failures across web and mobile, invalid token signatures after key rotation |
 
 
 ## Trade-offs
