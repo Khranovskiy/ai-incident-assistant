@@ -1,0 +1,6 @@
+Multiple payment transactions are failing with "Payment declined" errors across all card types.
+PayGate status page shows elevated error rates on their processing endpoint since 14:32 UTC.
+Our /payments/create and /payments/retry endpoints are returning 502 errors for ~40% of requests.
+payment-service logs show timeout errors when calling PayGate API: connection timeout after 30s.
+No changes deployed in the last 6 hours. DB and internal services appear healthy.
+Estimated impact: ~2000 customers affected in the last 30 minutes.

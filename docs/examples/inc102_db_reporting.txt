@@ -1,0 +1,6 @@
+Sharp increase in response time for /payments/create (up to 5-7 seconds, normally under 200ms).
+DB dashboards show high CPU (92%) and many long-running queries originating from reporting-service.
+Some customers receive 504 Gateway Timeout from api-gateway after waiting.
+reporting-service scheduled job started at 03:00 UTC as usual, but query volume is 4x normal.
+payment-service is timing out waiting for DB connections from the shared connection pool.
+auth-service and notification-service appear unaffected.

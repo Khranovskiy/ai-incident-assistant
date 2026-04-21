@@ -1,0 +1,6 @@
+Spike in login failures across web and mobile clients starting at 11:45 UTC.
+auth-service logs show "invalid token signature" errors for JWT validation on ~30% of requests.
+Customers who were already logged in are being forced to re-authenticate unexpectedly.
+/auth/login is returning 401 for valid credentials; /auth/refresh is returning 403.
+auth-service was redeployed at 11:40 UTC with a config change to rotate JWT signing keys.
+payment-service and reporting-service are unaffected. No DB anomalies detected.

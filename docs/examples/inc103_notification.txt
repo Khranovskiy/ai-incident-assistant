@@ -1,0 +1,6 @@
+Customers are not receiving SMS or email confirmation after successful payments.
+Payments are completing successfully — /payments/create returns 200 and DB records are correct.
+notification-service logs show repeated SMTP connection failures: "Connection refused" to mail relay.
+SMS delivery via SMS gateway is also failing: HTTP 503 responses since 09:15 UTC.
+notification-service queue is growing: ~12,000 undelivered notifications backlogged.
+No DB issues detected. payment-service, auth-service, and reporting-service are all healthy.
