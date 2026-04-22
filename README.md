@@ -2,6 +2,10 @@
 
 A CLI tool for triaging production incidents on a payment platform. It takes a free-text incident description and returns a structured JSON triage result: category, severity, affected scope, and up to three actionable hypotheses.
 
+## Short project demo
+
+[![Short project demo](https://img.youtube.com/vi/OKheVj9STH8/0.jpg)](https://youtu.be/OKheVj9STH8)
+
 ## Requirements
 
 - Go 1.25+
